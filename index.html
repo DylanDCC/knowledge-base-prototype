@@ -146,29 +146,132 @@ footer{border-top:1px solid var(--line);background:#fff;padding:30px 0;color:var
 <footer><div class="container">Northside Sports Therapy · Knowledge Base · Demo website</div></footer>
 
 <script>
-const data = [
- ["How do I book an appointment?","FAQ","Appointments"],
- ["How much does an initial appointment cost?","FAQ","Prices & payment"],
- ["What happens during my first appointment?","Article","Appointments"],
- ["How long is an appointment?","FAQ","Appointments"],
- ["What is the cancellation policy?","FAQ","Policies"],
- ["Sports Massage","Service","Services"],
- ["Initial Assessment","Service","Services"],
- ["Rehabilitation","Service","Services"],
- ["What should I bring?","Article","Before your appointment"],
- ["Where can I find you?","Article","Location & access"]
-];
-function searchKB(){
- const q=document.getElementById("searchInput").value.trim().toLowerCase();
- const box=document.getElementById("results");
- if(!q){box.style.display="none";box.innerHTML="";return}
- const matches=data.filter(x=>x.join(" ").toLowerCase().includes(q));
- box.style.display="block";
- box.innerHTML = matches.length
- ? matches.map(x=>`<div class="result"><span class="tag">${x[1]}</span><b>${x[0]}</b><span class="muted">${x[2]}</span></div>`).join("")
- : `<div class="result"><b>No results found</b><span class="muted">Try another search term.</span></div>`;
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXS9iPFyJRqxyvamSLd_Qgx50QcxXre_l8Xijta0s8_iuG8K3zC4TXV59aR-VCUGGlCdvH1kTUfODl/pub?gid=1866375587&single=true&output=csv";
+
+let data = [];
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let insideQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const next = text[i + 1];
+
+    if (char === '"' && insideQuotes && next === '"') {
+      field += '"';
+      i++;
+    } else if (char === '"') {
+      insideQuotes = !insideQuotes;
+    } else if (char === "," && !insideQuotes) {
+      row.push(field);
+      field = "";
+    } else if (char === "\n" && !insideQuotes) {
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = "";
+    } else if (char !== "\r") {
+      field += char;
+    }
+  }
+
+  if (field !== "" || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+
+  return rows;
 }
-document.getElementById("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")searchKB()});
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, function(char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[char];
+  });
+}
+
+async function loadKnowledgeBase() {
+  try {
+    const response = await fetch(CSV_URL);
+
+    if (!response.ok) {
+      throw new Error("Could not load the knowledge base.");
+    }
+
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+
+    rows.shift();
+
+    data = rows
+      .map(row => ({
+        question: row[3] || "",
+        answer: row[6] || row[4] || "",
+        category: row[2] || "",
+        type: row[1] || "",
+        status: row[5] || ""
+      }))
+      .filter(item =>
+        item.question &&
+        item.answer &&
+        (!item.status || item.status.toLowerCase() === "approved")
+      );
+
+  } catch (error) {
+    console.error("Knowledge base error:", error);
+  }
+}
+
+function searchKB() {
+  const q = document.getElementById("searchInput").value.trim().toLowerCase();
+  const box = document.getElementById("results");
+
+  if (!q) {
+    box.style.display = "none";
+    box.innerHTML = "";
+    return;
+  }
+
+  const matches = data.filter(item =>
+    `${item.question} ${item.answer} ${item.category}`
+      .toLowerCase()
+      .includes(q)
+  );
+
+  box.style.display = "block";
+
+  box.innerHTML = matches.length
+    ? matches.map(item => `
+        <div class="result">
+          <span class="tag">${escapeHTML(item.type || "FAQ")}</span>
+          <b>${escapeHTML(item.question)}</b>
+          <span class="muted">${escapeHTML(item.category)}</span>
+          <p class="muted" style="margin:10px 0 0">
+            ${escapeHTML(item.answer)}
+          </p>
+        </div>
+      `).join("")
+    : `
+        <div class="result">
+          <b>No results found</b>
+          <span class="muted">Try another search term.</span>
+        </div>
+      `;
+}
+
+loadKnowledgeBase();
+
+document.getElementById("searchInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") searchKB();
+});
 </script>
 </body>
 </html>
