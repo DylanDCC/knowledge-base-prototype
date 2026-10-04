@@ -248,17 +248,19 @@ function searchKB() {
 
   box.style.display = "block";
 
-  box.innerHTML = matches.length
-    ? matches.map(item => `
-        <div class="result">
-          <span class="tag">${escapeHTML(item.type || "FAQ")}</span>
-          <b>${escapeHTML(item.question)}</b>
-          <span class="muted">${escapeHTML(item.category)}</span>
-          <p class="muted" style="margin:10px 0 0">
-            ${escapeHTML(item.answer)}
-          </p>
+box.innerHTML = matches.length
+  ? matches.map(item => `
+      <div class="result">
+        <div class="tag">${escapeHTML(item.type || "FAQ")}</div>
+        <b>${escapeHTML(item.question)}</b>
+        <div class="muted" style="margin-top:4px">
+          ${escapeHTML(item.category)}
         </div>
-      `).join("")
+        <p style="margin:10px 0 0">
+          ${escapeHTML(item.answer)}
+        </p>
+      </div>
+    `).join("")
     : `
         <div class="result">
           <b>No results found</b>
