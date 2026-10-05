@@ -161,7 +161,7 @@ function mapApprovedCsv(text) {
   if (missing.length) throw new Error(`Approved CSV is missing required columns: ${missing.join(", ")}`);
 
   return rows.map(row => ({
-    type: row[columns.type] || "FAQ",
+    type: row[columns.type] || "",
     category: row[columns.category] || "Other",
     question: row[columns.question] || "",
     answer: row[columns.answer] || "",
@@ -200,7 +200,7 @@ function renderKnowledgeBase() {
       <div class="answer-list">${group.entries.map(item => `
         <details class="answer">
           <summary>${escapeHTML(item.question)}</summary>
-          <div class="tag">${escapeHTML(item.type)}</div>
+          ${item.type ? `<div class="tag">${escapeHTML(item.type)}</div>` : ""}
           <p>${escapeHTML(item.answer)}</p>
         </details>`).join("")}</div>
     </section>`).join("");
@@ -219,7 +219,7 @@ function searchKB() {
   section.hidden = false;
   results.innerHTML = matches.length ? matches.map(item => `
     <article class="result">
-      <div class="tag">${escapeHTML(item.type)} · ${escapeHTML(item.category)}</div>
+      <div class="tag">${item.type ? `${escapeHTML(item.type)} · ` : ""}${escapeHTML(item.category)}</div>
       <b>${escapeHTML(item.question)}</b>
       <p>${escapeHTML(item.answer)}</p>
     </article>`).join("") : '<div class="result"><b>No approved answers match that search.</b></div>';
