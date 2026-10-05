@@ -222,18 +222,15 @@ async function loadKnowledgeBase() {
     data = rows
       .map(row => ({
         question: row[3] || "",
-        answer: row[6] || row[4] || "",
+        answer: row[4] || "", // Never publish the AI draft column as a fallback.
         category: row[2] || "",
         type: row[1] || "",
         status: row[5] || ""
       }))
       .filter(item =>
-        item.question &&
-        item.answer &&
-        // The configured CSV must be the Approved-only sheet export. A blank status is
-        // allowed because approval is enforced by that source sheet; nonblank statuses
-        // still need to explicitly say Approved.
-        (!item.status || item.status.trim().toLowerCase() === "approved")
+        item.question.trim() &&
+        item.answer.trim() &&
+        item.status.trim().toLowerCase() === "approved"
       );
 
     loadState = "ready";
