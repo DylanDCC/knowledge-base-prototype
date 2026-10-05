@@ -69,9 +69,9 @@ footer{border-top:1px solid var(--line);background:#fff;padding:30px 0;color:var
     <p class="lead">Find answers about appointments, services, pricing and visiting Northside Sports Therapy.</p>
     <div class="search">
       <input id="searchInput" placeholder="Search the knowledge base..." aria-label="Search the knowledge base">
-      <button onclick="searchKB()">Search</button>
+      <button type="button" onclick="searchKB()">Search</button>
     </div>
-    <div id="results" class="results"></div>
+    <div id="results" class="results" role="status" aria-live="polite"></div>
   </div>
 </section>
 
@@ -149,6 +149,7 @@ footer{border-top:1px solid var(--line);background:#fff;padding:30px 0;color:var
 const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXS9iPFyJRqxyvamSLd_Qgx50QcxXre_l8Xijta0s8_iuG8K3zC4TXV59aR-VCUGGlCdvH1kTUfODl/pub?gid=1866375587&single=true&output=csv";
 
 let data = [];
+let loadState = "loading";
 
 function parseCSV(text) {
   const rows = [];
@@ -199,6 +200,13 @@ function escapeHTML(value) {
 }
 
 async function loadKnowledgeBase() {
+  const searchInput = document.getElementById("searchInput");
+  const box = document.getElementById("results");
+
+  searchInput.disabled = true;
+  box.style.display = "block";
+  box.innerHTML = '<div class="result">Loading approved answers…</div>';
+
   try {
     const response = await fetch(CSV_URL);
 
@@ -220,19 +228,38 @@ async function loadKnowledgeBase() {
         status: row[5] || ""
       }))
       .filter(item =>
-        item.question &&
-        item.answer &&
-        (!item.status || item.status.toLowerCase() === "approved")
+        item.question.trim() &&
+        item.answer.trim() &&
+        item.status.trim().toLowerCase() === "approved"
       );
+
+    loadState = "ready";
+    box.style.display = "none";
+    box.innerHTML = "";
+    searchInput.disabled = false;
 
   } catch (error) {
     console.error("Knowledge base error:", error);
+    loadState = "error";
+    box.innerHTML = '<div class="result"><b>Answers are temporarily unavailable.</b><span class="muted">Please try again later or contact the business directly.</span></div>';
   }
 }
 
 function searchKB() {
   const q = document.getElementById("searchInput").value.trim().toLowerCase();
   const box = document.getElementById("results");
+
+  if (loadState === "loading") {
+    box.style.display = "block";
+    box.innerHTML = '<div class="result">Loading approved answers…</div>';
+    return;
+  }
+
+  if (loadState === "error") {
+    box.style.display = "block";
+    box.innerHTML = '<div class="result"><b>Answers are temporarily unavailable.</b><span class="muted">Please try again later or contact the business directly.</span></div>';
+    return;
+  }
 
   if (!q) {
     box.style.display = "none";
@@ -277,3 +304,4 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
