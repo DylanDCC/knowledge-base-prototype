@@ -228,9 +228,12 @@ async function loadKnowledgeBase() {
         status: row[5] || ""
       }))
       .filter(item =>
-        item.question.trim() &&
-        item.answer.trim() &&
-        item.status.trim().toLowerCase() === "approved"
+        item.question &&
+        item.answer &&
+        // The configured CSV must be the Approved-only sheet export. A blank status is
+        // allowed because approval is enforced by that source sheet; nonblank statuses
+        // still need to explicitly say Approved.
+        (!item.status || item.status.trim().toLowerCase() === "approved")
       );
 
     loadState = "ready";
