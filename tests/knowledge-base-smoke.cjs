@@ -1,56 +1,115 @@
+const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const path = require('node:path');
 const vm = require('node:vm');
 
-const html = fs.readFileSync(require('node:path').join(__dirname, '..', 'index.html'), 'utf8');
-const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
-assert.ok(script, 'inline application script exists');
+const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const appScript = html.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+assert.ok(appScript, 'the page has an inline application script');
 
-function makePage(fetch) {
-  const input = { value: '', disabled: false, addEventListener() {} };
-  const results = { style: {}, innerHTML: '' };
+const csv = [
+  'ID,Type,Category,Question/Title,AI draft answer,Answer,Status',
+  '1,FAQ,Pricing,"What, when does it cost?","DRAFT PRICE","Approved price answer",Approved',
+  '2,FAQ,Pricing,"Needs review","Unapproved draft","Do not show",Needs Review',
+  '3,FAQ,Policies,"Blank status","Draft","Do not show",',
+  '4,FAQ,Policies,"Draft only","Draft without approved answer",,Approved',
+  '5,FAQ,"<img src=x>","<script>alert(1)</script>","Unsafe draft","<b>literal text</b>",Approved'
+].join('\n');
+
+function makePage({ search = '', businessConfigs, defaultSlug, csvBySlug }) {
+  const calls = [];
+  const nodes = new Map();
+  const makeNode = () => ({
+    textContent: '', value: '', disabled: false, hidden: false, innerHTML: '',
+    classList: { toggle() {} }, addEventListener() {}
+  });
   const document = {
+    title: '',
+    baseURI: 'https://example.test/yepmo/',
+    documentElement: { style: { setProperty() {} } },
     getElementById(id) {
-      if (id === 'searchInput') return input;
-      if (id === 'results') return results;
-      throw new Error(`Unexpected element: ${id}`);
+      if (!nodes.has(id)) nodes.set(id, makeNode());
+      return nodes.get(id);
     }
   };
-  const errors = [];
-  const context = { document, fetch, console: { error: (...args) => errors.push(args) } };
-  vm.runInNewContext(script.replace('loadKnowledgeBase();', ''), context);
-  return { context, input, results, errors };
+  const fetch = async value => {
+    const url = new URL(value, document.baseURI);
+    calls.push(url.toString());
+    if (url.pathname.endsWith('/businesses/default.json')) {
+      return defaultSlug
+        ? { ok: true, json: async () => ({ slug: defaultSlug }) }
+        : { ok: false, json: async () => ({}) };
+    }
+    const configMatch = url.pathname.match(/\/businesses\/([a-z0-9-]+)\.json$/);
+    if (configMatch && businessConfigs[configMatch[1]]) {
+      return { ok: true, json: async () => businessConfigs[configMatch[1]] };
+    }
+    const matchingSlug = Object.keys(csvBySlug).find(slug => businessConfigs[slug]?.approvedCsvUrl === url.toString());
+    if (matchingSlug) return { ok: true, text: async () => csvBySlug[matchingSlug] };
+    return { ok: false, json: async () => ({}), text: async () => '' };
+  };
+  const context = {
+    document,
+    window: { location: { search } },
+    URL,
+    URLSearchParams,
+    fetch,
+    console: { error() {} }
+  };
+  vm.runInNewContext(appScript.replace(/\nloadKnowledgeBase\(\);\s*$/, '\n'), context);
+  return { context, document, nodes, calls };
 }
 
-(async () => {
-  const csv = [
-    'ID,Type,Category,Question/Title,Answer,Status,AI draft answer',
-    '1,FAQ,Policy,"What, when?","Safe answer",Approved,"AI draft answer must not be shown"',
-    '2,FAQ,Policy,Review item,"Hidden answer",Needs Review,"Draft for review"',
-    '3,FAQ,Policy,Blank status row,"Do not publish",,"Unused draft"',
-    '4,FAQ,Policy,Unsafe HTML,"<script>alert(1)</script>",Approved,"Different draft"',
-    '5,FAQ,Policy,Uppercase approval,"Case insensitive answer",APPROVED,"Unused draft"',
-    '6,FAQ,Policy,Missing approved answer,,Approved,"Draft without approved answer"'
-  ].join('\n');
-  const page = makePage(async () => ({ ok: true, text: async () => csv }));
-  await page.context.loadKnowledgeBase();
-  assert.equal(vm.runInNewContext('data.length', page.context), 3, 'only rows with explicit approval and an approved answer are loaded');
-  assert.equal(vm.runInNewContext('data.some(item => item.answer === "Do not publish")', page.context), false, 'blank approval status fails closed');
-  assert.equal(vm.runInNewContext('data.some(item => item.answer === "Draft without approved answer")', page.context), false, 'an AI draft is never used as a fallback for a missing approved answer');
-  assert.equal(page.input.disabled, false, 'search unlocks after a successful load');
-  page.input.value = 'when';
-  page.context.searchKB();
-  assert.match(page.results.innerHTML, /Safe answer/, 'search returns approved CSV content');
-  assert.doesNotMatch(page.results.innerHTML, /AI draft answer must not be shown|Hidden answer|Do not publish/, 'search excludes draft content, unapproved content, and blank-status rows');
-  page.input.value = 'Unsafe HTML';
-  page.context.searchKB();
-  assert.match(page.results.innerHTML, /&lt;script&gt;/, 'search output escapes HTML from the source');
-  assert.doesNotMatch(page.results.innerHTML, /<script>/, 'source content cannot inject a script');
+function config(slug, name, approvedCsvUrl) {
+  return { slug, name, approvedCsvUrl, contactUrl: '', bookingUrl: '', accentColor: '#245f6b' };
+}
 
-  const failedPage = makePage(async () => { throw new Error('offline'); });
-  await failedPage.context.loadKnowledgeBase();
-  assert.match(failedPage.results.innerHTML, /temporarily unavailable/, 'failed loads show an explicit error state');
-  assert.equal(failedPage.input.disabled, true, 'search stays unavailable when the knowledge base cannot load');
-  assert.equal(failedPage.errors.length, 1, 'failed loads are logged for debugging');
-  console.log('Prototype smoke checks passed.');
-})().catch(error => { console.error(error); process.exitCode = 1; });
+test('uses the human-approved Answer column and fails closed for drafts or missing status', async () => {
+  const business = config('northside-sports-therapy', 'Northside Sports Therapy', 'https://data.example/northside.csv');
+  const page = makePage({
+    defaultSlug: business.slug,
+    businessConfigs: { [business.slug]: business },
+    csvBySlug: { [business.slug]: csv }
+  });
+
+  await page.context.loadKnowledgeBase();
+  assert.equal(vm.runInNewContext('data.length', page.context), 2);
+  assert.equal(page.document.title, `${business.name} — Knowledge Base`);
+  assert.equal(page.nodes.get('businessName').textContent, business.name);
+  assert.equal(page.nodes.get('searchInput').disabled, false);
+  assert.match(page.nodes.get('categorySections').innerHTML, /Approved price answer/);
+  assert.doesNotMatch(page.nodes.get('categorySections').innerHTML, /DRAFT PRICE|Do not show|Draft without approved answer/);
+  assert.match(page.nodes.get('categorySections').innerHTML, /&lt;script&gt;/);
+  assert.doesNotMatch(page.nodes.get('categorySections').innerHTML, /<script>/);
+
+  page.nodes.get('searchInput').value = 'cost';
+  page.context.searchKB();
+  assert.match(page.nodes.get('searchResults').innerHTML, /Approved price answer/);
+  assert.doesNotMatch(page.nodes.get('searchResults').innerHTML, /DRAFT PRICE/);
+});
+
+test('a business query loads only that business config and its separate CSV', async () => {
+  const alpha = config('northside-sports-therapy', 'Northside Sports Therapy', 'https://data.example/northside.csv');
+  const beta = config('other-business', 'Other Business', 'https://data.example/other.csv');
+  const otherCsv = 'Type,Category,Question,Answer,Status\nFAQ,Hours,When are you open?,Other business answer,Approved';
+  const page = makePage({
+    search: '?business=other-business',
+    businessConfigs: { [alpha.slug]: alpha, [beta.slug]: beta },
+    csvBySlug: { [alpha.slug]: csv, [beta.slug]: otherCsv }
+  });
+
+  await page.context.loadKnowledgeBase();
+  assert.equal(page.nodes.get('businessName').textContent, 'Other Business');
+  assert.match(page.nodes.get('categorySections').innerHTML, /Other business answer/);
+  assert.doesNotMatch(page.nodes.get('categorySections').innerHTML, /Approved price answer/);
+  assert.equal(page.calls.some(url => url.endsWith('/businesses/default.json')), false);
+});
+
+test('invalid tenant slugs fail before any tenant config or data is fetched', async () => {
+  const page = makePage({ search: '?business=../other-business', businessConfigs: {}, csvBySlug: {} });
+  await page.context.loadKnowledgeBase();
+  assert.equal(page.calls.length, 0);
+  assert.equal(page.nodes.get('searchInput').disabled, true);
+  assert.match(page.nodes.get('loadStatus').textContent, /temporarily unavailable/);
+});
