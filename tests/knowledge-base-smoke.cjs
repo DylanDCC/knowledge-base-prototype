@@ -113,3 +113,22 @@ test('invalid tenant slugs fail before any tenant config or data is fetched', as
   assert.equal(page.nodes.get('searchInput').disabled, true);
   assert.match(page.nodes.get('loadStatus').textContent, /temporarily unavailable/);
 });
+
+test('saved business configs use distinct approved CSV sources', () => {
+  const businessDir = path.join(__dirname, '..', 'businesses');
+  const configs = fs.readdirSync(businessDir)
+    .filter(file => file.endsWith('.json') && file !== 'default.json')
+    .map(file => ({ file, value: JSON.parse(fs.readFileSync(path.join(businessDir, file), 'utf8')) }));
+  const slugs = configs.map(({ value }) => value.slug);
+  const sourceUrls = configs.map(({ value }) => value.approvedCsvUrl);
+  const defaultConfig = JSON.parse(fs.readFileSync(path.join(businessDir, 'default.json'), 'utf8'));
+
+  assert.ok(configs.length > 0, 'at least one business config exists');
+  assert.equal(new Set(slugs).size, slugs.length, 'business slugs are unique');
+  assert.equal(new Set(sourceUrls).size, sourceUrls.length, 'each business has a separate CSV source');
+  assert.ok(configs.some(({ value }) => value.slug === defaultConfig.slug), 'the default slug has a matching business config');
+  for (const { file, value } of configs) {
+    assert.equal(file, `${value.slug}.json`, 'the filename matches its business slug');
+    assert.equal(new URL(value.approvedCsvUrl).protocol, 'https:', 'published CSV sources use HTTPS');
+  }
+});
