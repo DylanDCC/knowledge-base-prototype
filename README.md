@@ -13,7 +13,7 @@ Only general business information intended for public release belongs in these f
 ## Add a business
 
 1. Create a separate Approved-only sheet/export for the business using the required columns.
-2. Add `businesses/<slug>.json` with that business's name, slug, approved CSV URL, and optional public HTTPS contact or booking URLs.
+2. Add `businesses/<slug>.json` with a unique slug, that business's name, its own approved CSV URL, and optional public HTTPS contact or booking URLs.
 3. Open `?business=<slug>` on the hosted site. The root URL uses the slug in `businesses/default.json`.
 
 Example business config:
@@ -29,7 +29,7 @@ Example business config:
 }
 ```
 
-Keep every business on its own source URL. The slug selects one config, which selects one CSV; the page loads only that business's answers.
+Keep every business on its own source URL. The smoke test checks that configured businesses do not share a CSV URL. The slug selects one config, which selects one CSV; the page loads only that business's answers.
 
 ## Local smoke tests
 
