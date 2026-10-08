@@ -8,7 +8,7 @@ Each business has its own JSON configuration in `businesses/<slug>.json`. Its `a
 
 The template reads the CSV by header name, not column position. Required columns are `Type`, `Category`, `Question/Title` (or `Question`), `Answer`, and `Status`. A row is displayed only when it has a question, an answer, and a status of `Approved`. `AI draft answer` is never used by the customer-facing page.
 
-Only general business information intended for public release belongs in these files and sheets. Do not put customer or patient names, contact details, appointment histories, profiles, medical records, or personal conversations in the knowledge base.
+Only general business information intended for public release belongs in these files and sheets. Do not put customer or patient names, contact details, appointment histories, profiles, medical records, or personal conversations in the knowledge base. For healthcare-related businesses, keep published content to general business and operational information. Neither AI drafts nor approved content may create diagnoses or personalised medical advice; keep that content out of the customer-facing knowledge base. AI-generated content remains a draft until a human approves it.
 
 ## Add a business
 
