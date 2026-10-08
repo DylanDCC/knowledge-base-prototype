@@ -146,7 +146,7 @@ footer{border-top:1px solid var(--line);background:#fff;padding:30px 0;color:var
 <footer><div class="container">Northside Sports Therapy · Knowledge Base · Demo website</div></footer>
 
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXS9iPFyJRqxyvamSLd_Qgx50QcxXre_l8Xijta0s8_iuG8K3zC4TXV59aR-VCUGGlCdvH1kTUfODl/pub?gid=1866375587&single=true&output=csv";
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXS9iPFyJRqxyvamSLd_Qgx50QcxXre_l8Xijta0s8_iuG8K3zC4TXV59aR-VCUGGlCdvH1kTUfODl/pub?gid=1944008253&single=true&output=csv";
 
 let data = [];
 
@@ -198,6 +198,31 @@ function escapeHTML(value) {
   });
 }
 
+function mapApprovedCsv(text) {
+  const rows = parseCSV(text);
+  const headers = (rows.shift() || []).map(value => value.replace(/^\uFEFF/, "").trim().toLowerCase());
+  const column = names => headers.findIndex(header => names.includes(header));
+  const columns = {
+    type: column(["type"]),
+    category: column(["category"]),
+    question: column(["question/title", "question"]),
+    answer: column(["answer"]),
+    status: column(["status"])
+  };
+  const missing = Object.entries(columns).filter(([, index]) => index < 0).map(([name]) => name);
+  if (missing.length) throw new Error(`Approved CSV is missing required columns: ${missing.join(", ")}`);
+
+  return rows.map(row => ({
+    type: row[columns.type] || "",
+    category: row[columns.category] || "",
+    question: row[columns.question] || "",
+    answer: row[columns.answer] || "",
+    status: row[columns.status] || ""
+  })).filter(item =>
+    item.question.trim() && item.answer.trim() && item.status.trim().toLowerCase() === "approved"
+  );
+}
+
 async function loadKnowledgeBase() {
   try {
     const response = await fetch(CSV_URL);
@@ -207,23 +232,7 @@ async function loadKnowledgeBase() {
     }
 
     const csvText = await response.text();
-    const rows = parseCSV(csvText);
-
-    rows.shift();
-
-    data = rows
-      .map(row => ({
-        question: row[3] || "",
-        answer: row[6] || row[4] || "",
-        category: row[2] || "",
-        type: row[1] || "",
-        status: row[5] || ""
-      }))
-      .filter(item =>
-        item.question &&
-        item.answer &&
-        (!item.status || item.status.toLowerCase() === "approved")
-      );
+    data = mapApprovedCsv(csvText);
 
   } catch (error) {
     console.error("Knowledge base error:", error);
