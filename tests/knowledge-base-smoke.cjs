@@ -157,7 +157,7 @@ test('business configs without a dedicated approved-only feed fail closed', asyn
   });
 
   await page.context.loadKnowledgeBase();
-  assert.equal(page.calls.length, 2, 'the page stops before requesting any CSV');
+  assert.equal(page.calls.length, 1, 'the page fetches only the business config and no CSV');
   assert.equal(page.nodes.get('searchInput').disabled, true);
   assert.match(page.nodes.get('loadStatus').textContent, /temporarily unavailable/);
 });
