@@ -132,3 +132,14 @@ test('saved business configs use distinct approved CSV sources', () => {
     assert.equal(new URL(value.approvedCsvUrl).protocol, 'https:', 'published CSV sources use HTTPS');
   }
 });
+
+test('primary navigation stays within the selected business page', () => {
+  const header = html.match(/<header\\b[^>]*>([\\s\\S]*?)<\\/header>/i)?.[1];
+  assert.ok(header, 'the page header exists');
+  const navigation = header.match(/<nav\\b[^>]*>([\\s\\S]*?)<\\/nav>/i)?.[1];
+  assert.ok(navigation, 'the page has primary navigation');
+  const links = Array.from(navigation.matchAll(/<a\\b[^>]*href=["']([^"']+)["']/gi), match => match[1]);
+
+  assert.ok(links.length > 0, 'the navigation has links');
+  assert.ok(links.every(href => href.startsWith('#')), 'navigation links remain within the current business page');
+});
