@@ -4,7 +4,7 @@ This repository serves public, static knowledge bases from one shared page templ
 
 ## Business data
 
-Each business has its own JSON configuration in `businesses/<slug>.json`. Its `approvedCsvUrl` must point to that business's **published Approved-only CSV**. Do not point it at an intake, working, or AI-draft sheet: a published Google CSV can be fetched directly by anyone, even when the site UI does not display a row.
+Each business has its own JSON configuration in `businesses/<slug>.json`. Its `approvedCsvUrl` must point to that business's **published Approved-only CSV**. Do not point it at an intake, working, or AI-draft sheet: a published Google CSV can be fetched directly by anyone, even when the site UI does not display a row. The Northside prototype config currently leaves this URL empty until a dedicated Approved-only feed is available; the page intentionally fails closed in that state.
 
 The template reads the CSV by header name, not column position. Required columns are `Type`, `Category`, `Question/Title` (or `Question`), `Answer`, and `Status`. A row is displayed only when it has a question, an answer, and a status of `Approved`. `AI draft answer` is never used by the customer-facing page.
 
@@ -39,7 +39,7 @@ With Node.js installed, run:
 node tests/knowledge-base-smoke.cjs
 ```
 
-The tests cover approval filtering, using the `Answer` column rather than the AI draft, independent business configs, invalid tenant slugs, and HTML escaping.
+The tests cover approval filtering, using the `Answer` column rather than the AI draft, independent business configs, invalid tenant slugs, fail-closed behavior when no approved feed is configured, in-page navigation, and HTML escaping.
 
 ## Current limits
 
