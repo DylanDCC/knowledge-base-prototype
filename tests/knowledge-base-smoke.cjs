@@ -120,7 +120,7 @@ test('saved business configs use distinct approved CSV sources', () => {
     .filter(file => file.endsWith('.json') && file !== 'default.json')
     .map(file => ({ file, value: JSON.parse(fs.readFileSync(path.join(businessDir, file), 'utf8')) }));
   const slugs = configs.map(({ value }) => value.slug);
-  const sourceUrls = configs.map(({ value }) => value.approvedCsvUrl);
+  const sourceUrls = configs.map(({ value }) => value.approvedCsvUrl).filter(Boolean);
   const defaultConfig = JSON.parse(fs.readFileSync(path.join(businessDir, 'default.json'), 'utf8'));
 
   assert.ok(configs.length > 0, 'at least one business config exists');
@@ -129,7 +129,7 @@ test('saved business configs use distinct approved CSV sources', () => {
   assert.ok(configs.some(({ value }) => value.slug === defaultConfig.slug), 'the default slug has a matching business config');
   for (const { file, value } of configs) {
     assert.equal(file, `${value.slug}.json`, 'the filename matches its business slug');
-    assert.equal(new URL(value.approvedCsvUrl).protocol, 'https:', 'published CSV sources use HTTPS');
+    if (value.approvedCsvUrl) assert.equal(new URL(value.approvedCsvUrl).protocol, 'https:', 'published CSV sources use HTTPS');
   }
 });
 
@@ -146,4 +146,18 @@ test('primary navigation stays within the selected business page', () => {
 
   assert.ok(links.length > 0, 'the navigation has links');
   assert.ok(links.every(href => href.startsWith('#')), 'navigation links remain within the current business page');
+});
+
+test('business configs without a dedicated approved-only feed fail closed', async () => {
+  const business = config('northside-sports-therapy', 'Northside Sports Therapy', '');
+  const page = makePage({
+    search: '?business=northside-sports-therapy',
+    businessConfigs: { [business.slug]: business },
+    csvBySlug: { [business.slug]: csv }
+  });
+
+  await page.context.loadKnowledgeBase();
+  assert.equal(page.calls.length, 2, 'the page stops before requesting any CSV');
+  assert.equal(page.nodes.get('searchInput').disabled, true);
+  assert.match(page.nodes.get('loadStatus').textContent, /temporarily unavailable/);
 });
