@@ -10,6 +10,13 @@ The template reads the CSV by header name, not column position. Required columns
 
 Only general business information intended for public release belongs in these files and sheets. Do not put customer or patient names, contact details, appointment histories, profiles, medical records, or personal conversations in the knowledge base. For healthcare-related businesses, keep published content to general business and operational information. Neither AI drafts nor approved content may create diagnoses or personalised medical advice; keep that content out of the customer-facing knowledge base. AI-generated content remains a draft until a human approves it.
 
+
+## Existing AI draft workflow
+
+The current Make prototype watches for new Google Sheets rows, sends the supplied question and business answer to the AI with instructions not to invent or change meaning, then writes the result to the AI draft answer column and sets the row status to Needs Review. A human must approve content before it appears in the published approved-only feed. The AI rewrites a supplied answer; it does not fill gaps in missing business information.
+
+The exported scenario watches new rows only, so editing an existing row does not trigger a new draft. It also has no status filter before the AI step and its prompt does not explicitly prohibit personal data or diagnoses and personalised medical advice. Keep input rows limited to general business information, and add those safeguards before using the automation for healthcare businesses or accepting updates at scale. Never put customer or patient information into the scenario.
+
 ## Add a business
 
 1. Create a separate Approved-only sheet/export for the business using the required columns.
