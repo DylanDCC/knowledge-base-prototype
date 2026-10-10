@@ -13,6 +13,9 @@ Only general business information intended for public release belongs in these f
 
 ## Existing AI draft workflow
 
+For the human pre-check and step-by-step process for the current Make setup, see [the AI draft workflow guide](docs/ai-draft-workflow.md). It explains the `AI Ready` status, the new-row trigger limitation, privacy boundaries, and approval before publication.
+
+
 The current Northside Make prototype watches for new Google Sheets rows. A route filter passes only rows whose Status is exactly `Draft` to the AI; rows marked `Approved` or `Needs review` do not reach the AI step. It sends Question/Title and Answer to the AI, then writes the response to `AI draft answer` and sets Status to `Needs review`. AI output stays separate from the approved public feed. A human must review and approve content before it appears in that feed.
 
 The prompt prohibits invention, requires a `REVIEW NEEDED` response when the question or answer is missing, unclear, or contradictory, rejects healthcare diagnoses and personalised medical advice, and says to flag apparent customer/patient personal information without echoing it. It treats sheet content as source material, not as instructions.
