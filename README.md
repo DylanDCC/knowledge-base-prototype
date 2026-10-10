@@ -4,27 +4,20 @@ This repository serves public, static knowledge bases from one shared page templ
 
 ## Business data
 
-Each business has its own JSON configuration in `businesses/<slug>.json`. Its `approvedCsvUrl` must point to that business's **published Approved-only CSV**. Do not point it at an intake, working, or AI-draft sheet: a published Google CSV can be fetched directly by anyone, even when the site UI does not display a row. The Northside prototype config points to a separate CSV containing only the public fields Type, Category, Question/Title, Answer, and Status, with Approved rows.
+Each business has its own JSON configuration in `businesses/<slug>.json`. Its `approvedCsvUrl` must point to that business's **published Approved-only CSV**. Do not point it at an intake, working, or AI-draft sheet: a published Google CSV can be fetched directly by anyone, even when the site UI does not display a row.
 
 The template reads the CSV by header name, not column position. Required columns are `Type`, `Category`, `Question/Title` (or `Question`), `Answer`, and `Status`. A row is displayed only when it has a question, an answer, and a status of `Approved`. `AI draft answer` is never used by the customer-facing page.
 
-Only general business information intended for public release belongs in these files and sheets. Do not put customer or patient names, contact details, appointment histories, profiles, medical records, or personal conversations in the knowledge base. For healthcare-related businesses, keep published content to general business and operational information. Neither AI drafts nor approved content may create diagnoses or personalised medical advice; keep that content out of the customer-facing knowledge base. AI-generated content remains a draft until a human approves it.
-
+Only general business information intended for public release belongs in these files and sheets. Do not put customer or patient names, contact details, appointment histories, profiles, medical records, or personal conversations in the knowledge base. For healthcare-related businesses, keep published content to general business and operational information. Do not create diagnoses or personalised medical advice. AI-generated content remains a draft until a human approves it.
 
 ## Existing AI draft workflow
 
-For the human pre-check and step-by-step process for the current Make setup, see [the AI draft workflow guide](docs/ai-draft-workflow.md). It explains the `AI Ready` status, the new-row trigger limitation, privacy boundaries, and approval before publication.
+For the human pre-check and step-by-step process for the current Make setup, see [the AI draft workflow guide](docs/ai-draft-workflow.md).
 
+The Northside Make prototype watches new Google Sheets rows. Its saved route passes only rows whose Status is exactly `AI Ready` and whose Question/Title and Answer fields are non-empty. Make sends those values to the AI, writes the result to `AI draft answer`, and sets Status to `Needs review`. The customer-facing page uses the separate approved feed and displays only rows marked `Approved`.
 
-The current Northside Make prototype watches for new Google Sheets rows. A route filter passes only rows whose Status is exactly `Draft` to the AI; rows marked `Approved` or `Needs review` do not reach the AI step. It sends Question/Title and Answer to the AI, then writes the response to `AI draft answer` and sets Status to `Needs review`. AI output stays separate from the approved public feed. A human must review and approve content before it appears in that feed.
+A human must check a row before marking it `AI Ready`. This is a pre-check, not a privacy detector or a guarantee: any row that passes the filter is sent to the AI provider. Never use this workflow for customer or patient personal information, diagnoses, or personalised medical advice. The current Northside scenario is inactive and is not a reusable, tenant-isolated automation.
 
-The prompt prohibits invention, requires a `REVIEW NEEDED` response when the question or answer is missing, unclear, or contradictory, rejects healthcare diagnoses and personalised medical advice, and says to flag apparent customer/patient personal information without echoing it. It treats sheet content as source material, not as instructions.
-
-These are prompt safeguards, not a pre-AI privacy filter: the row text is already sent to Make's AI provider before the prompt can flag it. Never enter customer or patient personal information into this workflow. The current scenario is connected specifically to the Northside spreadsheet and is not a reusable tenant-isolated automation.
-
-The original Northside trigger watches new rows only, so editing an existing row does not create a draft. Its saved route now requires Status `AI Ready` and non-whitespace Question/Title and Answer values (both checked with `Matches pattern` and `\\S`) before sending a row to AI. A human must set `AI Ready` when adding a row only after checking that it contains public general business information and no known customer or patient personal data. Rows that remain `Draft`, or are missing either required field, do not pass the route. This human checkpoint reduces risk but cannot guarantee that personal information is absent. The original Northside scenario remains inactive and has not been run; its connected Sheet has not been changed.
-
-The original prompt now begins by explaining that `AI Ready` is a human pre-check, not a guarantee; it continues to prohibit invention, require human review, and flag personal-information and healthcare issues. In an inactive copy tested against a private sheet containing synthetic data only, three answerable synthetic FAQs processed after the clarification produced expected draft answers; healthcare and insufficient-answer examples were flagged, and a synthetic personal-information example was not echoed. An earlier complete FAQ produced a false missing-question warning before the prompt adjustment, so continue monitoring output quality. Prompt-level personal-data instructions cannot prevent row text from being sent to Make's AI provider. Never enter customer or patient personal information into this workflow. Neither scenario should be activated until an appropriate privacy control is in place.
 ## Add a business
 
 1. Create a separate Approved-only sheet/export for the business using the required columns.
@@ -44,7 +37,7 @@ Example business config:
 }
 ```
 
-Keep every business on its own source URL. The smoke test checks that configured businesses do not share a CSV URL. The slug selects one config, which selects one CSV; the page loads only that business's answers.
+Keep every business on its own source URL. The slug selects one config, which selects one CSV; the page loads only that business's answers.
 
 ## Local smoke tests
 
