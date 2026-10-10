@@ -3,152 +3,78 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Northside Sports Therapy — Knowledge Base</title>
+<meta name="theme-color" content="#f7f8f9">
+<title>Business Knowledge Base</title>
 <style>
-:root{
-  --ink:#17212b; --muted:#66727d; --line:#e5e9ed; --bg:#f7f8f9;
-  --card:#fff; --accent:#245f6b; --accent2:#e9f2f3;
-}
+:root{--ink:#17212b;--muted:#66727d;--line:#e5e9ed;--bg:#f7f8f9;--card:#fff;--accent:#245f6b;--accent-soft:#e9f2f3}
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
 a{color:inherit;text-decoration:none}
 .container{width:min(1080px,calc(100% - 36px));margin:auto}
 header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
-.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
-.brand{font-weight:750;letter-spacing:-.02em}
-.brand small{display:block;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-.navlinks{display:flex;gap:24px;color:#52606b;font-size:14px}
-.button{display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:650;font-size:14px}
-.button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
-.hero{padding:72px 0 52px;background:#fff}
-.eyebrow{font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
-h1{font-size:clamp(38px,6vw,64px);line-height:1.02;letter-spacing:-.055em;margin:12px 0 18px;max-width:760px}
-.lead{font-size:18px;color:var(--muted);max-width:650px;margin:0 0 28px}
-.search{display:flex;max-width:720px;background:#fff;border:1px solid #d8dee3;border-radius:12px;padding:6px;box-shadow:0 12px 35px rgba(20,30,40,.08)}
-.search input{flex:1;border:0;outline:0;padding:13px 14px;font-size:16px;background:transparent}
-.search button{border:0;background:var(--accent);color:#fff;border-radius:8px;padding:0 20px;font-weight:700}
-main{padding:42px 0 80px}
-.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
-h2{font-size:27px;letter-spacing:-.03em;margin:0}
-.muted{color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-height:150px;transition:.15s ease}
-.card:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(20,30,40,.06)}
-.icon{width:38px;height:38px;border-radius:10px;background:var(--accent2);display:grid;place-items:center;color:var(--accent);font-weight:800;margin-bottom:15px}
-.card h3{margin:0 0 6px;font-size:17px}
-.card p{margin:0;color:var(--muted);font-size:14px}
-.questions{display:grid;gap:10px}
-.q{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 18px;font-weight:650;display:flex;justify-content:space-between;gap:20px}
-.q span{color:var(--muted)}
-.results{display:none;margin-top:22px}
-.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:10px}
-.result b{display:block;margin-bottom:5px}
-.tag{font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.nav{min-height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-weight:750;letter-spacing:-.02em}.brand small{display:block;font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.navlinks{display:flex;gap:24px;color:#52606b;font-size:14px}.button{display:inline-flex;align-items:center;justify-content:center;padding:11px 17px;border-radius:9px;border:1px solid var(--line);background:#fff;font-weight:650;font-size:14px}.button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hero{padding:72px 0 52px;background:#fff}.eyebrow{font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+h1{font-size:clamp(38px,6vw,64px);line-height:1.02;letter-spacing:-.055em;margin:12px 0 18px;max-width:760px}.lead{font-size:18px;color:var(--muted);max-width:650px;margin:0 0 28px}
+.search{display:flex;max-width:720px;background:#fff;border:1px solid #d8dee3;border-radius:12px;padding:6px;box-shadow:0 12px 35px rgba(20,30,40,.08)}.search input{flex:1;min-width:0;border:0;outline:0;padding:13px 14px;font-size:16px;background:transparent}.search button{border:0;background:var(--accent);color:#fff;border-radius:8px;padding:0 20px;font-weight:700}.search button:disabled{opacity:.55;cursor:wait}
+main{padding:42px 0 80px}.section{margin-bottom:54px}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}h2{font-size:27px;letter-spacing:-.03em;margin:0}.muted{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-height:120px;transition:.15s ease}.card:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(20,30,40,.06)}.card h3{margin:0 0 6px;font-size:17px}.icon{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);font-weight:800;margin-bottom:15px}
+.answer-list{display:grid;gap:10px}.answer{background:#fff;border:1px solid var(--line);border-radius:12px;padding:17px 18px}.answer summary{font-weight:700;cursor:pointer}.answer p{margin:12px 0 0;color:#46535e;white-space:pre-line}.tag{font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+.status{min-height:24px;margin:12px 0 0;color:var(--muted);font-size:14px}.status.error{color:#9b2525}.results{display:grid;gap:10px}.result{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}.result b{display:block;margin-bottom:5px}.empty{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;color:var(--muted)}
 footer{border-top:1px solid var(--line);background:#fff;padding:30px 0;color:var(--muted);font-size:13px}
-@media(max-width:760px){
- .navlinks{display:none}.grid{grid-template-columns:1fr}
- .hero{padding:52px 0 38px} .search{display:block;background:transparent;border:0;box-shadow:none;padding:0}
- .search input{width:100%;background:#fff;border:1px solid var(--line);border-radius:9px;margin-bottom:8px}
- .search button{height:46px;width:100%}
-}
+@media(max-width:760px){.navlinks{display:none}.grid{grid-template-columns:1fr}.hero{padding:52px 0 38px}.search{display:block;background:transparent;border:0;box-shadow:none;padding:0}.search input{width:100%;background:#fff;border:1px solid var(--line);border-radius:9px;margin-bottom:8px}.search button{height:46px;width:100%}}
 </style>
 </head>
 <body>
-<header>
+<header id="top">
   <div class="container nav">
-    <a class="brand" href="#">Northside Sports Therapy<small>Knowledge Base</small></a>
-    <nav class="navlinks"><a href="#categories">Knowledge Base</a><a href="#faqs">FAQs</a><a href="#contact">Contact</a></nav>
-    <a class="button primary" href="#contact">Book an Appointment</a>
+    <a class="brand" href="#top"><span id="businessName">Knowledge Base</span><small>Knowledge Base</small></a>
+    <nav class="navlinks" aria-label="Main navigation"><a href="#topics">Browse topics</a><a href="#help">Get help</a></nav>
+    <a id="bookingLink" class="button primary" hidden></a>
   </div>
 </header>
-
 <section class="hero">
   <div class="container">
     <div class="eyebrow">Help centre</div>
     <h1>How can we help?</h1>
-    <p class="lead">Find answers about appointments, services, pricing and visiting Northside Sports Therapy.</p>
-    <div class="search">
-      <input id="searchInput" placeholder="Search the knowledge base..." aria-label="Search the knowledge base">
-      <button onclick="searchKB()">Search</button>
-    </div>
-    <div id="results" class="results"></div>
+    <p class="lead" id="intro">Search approved information from the business.</p>
+    <form class="search" id="searchForm" role="search">
+      <input id="searchInput" type="search" placeholder="Search approved answers..." aria-label="Search approved answers" disabled>
+      <button id="searchButton" type="submit" disabled>Search</button>
+    </form>
+    <p id="loadStatus" class="status" role="status" aria-live="polite">Loading knowledge base…</p>
   </div>
 </section>
-
 <main class="container">
-  <section id="categories">
-    <div class="sectionhead"><div><h2>Browse the knowledge base</h2><div class="muted">Find information by topic.</div></div></div>
-    <div class="grid">
-      <a class="card" href="#faqs"><div class="icon">A</div><h3>Appointments</h3><p>Booking, appointment types and what to expect.</p></a>
-      <a class="card" href="#services"><div class="icon">S</div><h3>Services</h3><p>Information about the services available.</p></a>
-      <a class="card" href="#prices"><div class="icon">£</div><h3>Prices & payment</h3><p>Current pricing and payment information.</p></a>
-      <a class="card" href="#before"><div class="icon">B</div><h3>Before your appointment</h3><p>Useful information before you visit.</p></a>
-      <a class="card" href="#after"><div class="icon">A</div><h3>After your appointment</h3><p>General information for after your visit.</p></a>
-      <a class="card" href="#policies"><div class="icon">P</div><h3>Policies</h3><p>Cancellation, payment and other policies.</p></a>
-    </div>
+  <section id="topics" class="section" hidden>
+    <div class="sectionhead"><div><h2>Browse by topic</h2><div class="muted">Answers are grouped using the business categories.</div></div></div>
+    <div id="categoryCards" class="grid"></div>
   </section>
-
-  <section id="faqs" style="margin-top:58px">
-    <div class="sectionhead"><div><h2>Popular questions</h2><div class="muted">Quick answers to common questions.</div></div></div>
-    <div class="questions">
-      <div class="q"><div>How do I book an appointment?</div><span>›</span></div>
-      <div class="q"><div>How much does an initial appointment cost?</div><span>›</span></div>
-      <div class="q"><div>What happens during my first appointment?</div><span>›</span></div>
-      <div class="q"><div>How long is an appointment?</div><span>›</span></div>
-      <div class="q"><div>What is the cancellation policy?</div><span>›</span></div>
-    </div>
+  <section id="answers" class="section" hidden>
+    <div id="categorySections"></div>
   </section>
-
-  <section id="services" style="margin-top:58px">
-    <div class="sectionhead"><div><h2>Services</h2><div class="muted">Example service pages for the demo.</div></div></div>
-    <div class="grid">
-      <div class="card"><div class="tag">Service</div><h3>Initial Assessment</h3><p>Example information about an initial appointment.</p></div>
-      <div class="card"><div class="tag">Service</div><h3>Sports Massage</h3><p>Example information about sports massage.</p></div>
-      <div class="card"><div class="tag">Service</div><h3>Rehabilitation</h3><p>Example information about rehabilitation.</p></div>
-    </div>
+  <section id="searchResultsSection" class="section" hidden>
+    <div class="sectionhead"><h2>Search results</h2></div>
+    <div id="searchResults" class="results" aria-live="polite"></div>
   </section>
-
-  <section id="before" style="margin-top:58px">
-    <div class="sectionhead"><div><h2>Helpful information</h2><div class="muted">Example articles that can be expanded later.</div></div></div>
-    <div class="grid">
-      <div class="card"><div class="tag">Article</div><h3>What happens during your first appointment?</h3><p>Explain the process in clear, simple language.</p></div>
-      <div class="card"><div class="tag">Article</div><h3>What should I bring?</h3><p>Provide practical information before a visit.</p></div>
-      <div class="card"><div class="tag">Article</div><h3>Where can I find you?</h3><p>Explain location and access information.</p></div>
-    </div>
-  </section>
-
-  <section id="prices" style="margin-top:58px">
-    <div class="card">
-      <div class="tag">Demo content</div>
-      <h3>Prices & payment</h3>
-      <p>All pricing in this prototype is placeholder content. Replace it with the real business information before publishing.</p>
-    </div>
-  </section>
-
-  <section id="policies" style="margin-top:14px">
-    <div class="card">
-      <div class="tag">Demo content</div>
-      <h3>Policies</h3>
-      <p>Cancellation, payment and other policy information will live here once the real business has supplied and approved it.</p>
-    </div>
-  </section>
-
-  <section id="contact" style="margin-top:58px">
+  <section id="help" class="section" hidden>
     <div class="card">
       <div class="tag">Need more help?</div>
-      <h2 style="margin:7px 0">Still can't find what you're looking for?</h2>
-      <p class="muted">Contact the business or use its booking system for appointment-specific questions.</p>
-      <a class="button primary" href="#">Contact Northside Sports Therapy</a>
+      <h2>Contact the business</h2>
+      <p class="muted">Use the contact or booking details supplied by the business.</p>
+      <div id="helpLinks" class="help-links"></div>
     </div>
   </section>
+  <section id="emptyState" class="empty" hidden>No approved answers are available yet.</section>
 </main>
-
-<footer><div class="container">Northside Sports Therapy · Knowledge Base · Demo website</div></footer>
-
+<footer><div class="container"><span id="footerName">Business Knowledge Base</span> · Knowledge Base</div></footer>
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXS9iPFyJRqxyvamSLd_Qgx50QcxXre_l8Xijta0s8_iuG8K3zC4TXV59aR-VCUGGlCdvH1kTUfODl/pub?gid=1944008253&single=true&output=csv";
-
+const DEFAULT_CONFIG_PATH = "businesses/default.json";
+const BUSINESS_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 let data = [];
+let business = null;
+let loadState = "loading";
 
 function parseCSV(text) {
   const rows = [];
@@ -159,43 +85,65 @@ function parseCSV(text) {
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
     const next = text[i + 1];
-
-    if (char === '"' && insideQuotes && next === '"') {
-      field += '"';
-      i++;
-    } else if (char === '"') {
-      insideQuotes = !insideQuotes;
-    } else if (char === "," && !insideQuotes) {
-      row.push(field);
-      field = "";
-    } else if (char === "\n" && !insideQuotes) {
-      row.push(field);
-      rows.push(row);
-      row = [];
-      field = "";
-    } else if (char !== "\r") {
-      field += char;
-    }
+    if (char === '"' && insideQuotes && next === '"') { field += '"'; i++; }
+    else if (char === '"') insideQuotes = !insideQuotes;
+    else if (char === "," && !insideQuotes) { row.push(field); field = ""; }
+    else if (char === "\n" && !insideQuotes) { row.push(field); rows.push(row); row = []; field = ""; }
+    else if (char !== "\r") field += char;
   }
-
-  if (field !== "" || row.length > 0) {
-    row.push(field);
-    rows.push(row);
-  }
-
+  if (field !== "" || row.length > 0) { row.push(field); rows.push(row); }
   return rows;
 }
 
 function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, function(char) {
-    return {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[char];
-  });
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  })[char]);
+}
+
+function getElement(id) { return document.getElementById(id); }
+function setStatus(message, isError = false) {
+  const status = getElement("loadStatus");
+  status.textContent = message;
+  status.classList.toggle("error", isError);
+}
+function siteAsset(path) { return new URL(path, document.baseURI).toString(); }
+function validSlug(value) { return typeof value === "string" && BUSINESS_SLUG_PATTERN.test(value); }
+function safeHttpsUrl(value) {
+  if (typeof value !== "string" || !value.trim()) return "";
+  try { const url = new URL(value); return url.protocol === "https:" ? url.toString() : ""; }
+  catch { return ""; }
+}
+
+async function getJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("Could not load business configuration.");
+  return response.json();
+}
+
+function applyBusinessConfig(config, slug) {
+  if (!config || config.slug !== slug || typeof config.name !== "string" || !config.name.trim()) {
+    throw new Error("Business configuration is invalid.");
+  }
+  business = config;
+  const name = config.name.trim();
+  document.title = `${name} — Knowledge Base`;
+  getElement("businessName").textContent = name;
+  getElement("footerName").textContent = name;
+  getElement("intro").textContent = `Search approved information for ${name}.`;
+
+  if (typeof config.accentColor === "string" && /^#[0-9a-f]{6}$/i.test(config.accentColor)) {
+    document.documentElement.style.setProperty("--accent", config.accentColor);
+    document.documentElement.style.setProperty("--accent-soft", `${config.accentColor}1a`);
+  }
+
+  const links = [];
+  const contactUrl = safeHttpsUrl(config.contactUrl);
+  const bookingUrl = safeHttpsUrl(config.bookingUrl);
+  if (contactUrl) links.push(`<a class="button" href="${escapeHTML(contactUrl)}">Contact ${escapeHTML(name)}</a>`);
+  if (bookingUrl) links.push(`<a class="button primary" href="${escapeHTML(bookingUrl)}">${escapeHTML(config.bookingLabel || "Book now")}</a>`);
+  getElement("helpLinks").innerHTML = links.join(" ");
+  getElement("help").hidden = links.length === 0;
 }
 
 function mapApprovedCsv(text) {
@@ -214,7 +162,7 @@ function mapApprovedCsv(text) {
 
   return rows.map(row => ({
     type: row[columns.type] || "",
-    category: row[columns.category] || "",
+    category: row[columns.category] || "Other",
     question: row[columns.question] || "",
     answer: row[columns.answer] || "",
     status: row[columns.status] || ""
@@ -223,66 +171,105 @@ function mapApprovedCsv(text) {
   );
 }
 
-async function loadKnowledgeBase() {
-  try {
-    const response = await fetch(CSV_URL);
-
-    if (!response.ok) {
-      throw new Error("Could not load the knowledge base.");
-    }
-
-    const csvText = await response.text();
-    data = mapApprovedCsv(csvText);
-
-  } catch (error) {
-    console.error("Knowledge base error:", error);
+function groupByCategory(items) {
+  const groups = new Map();
+  for (const item of items) {
+    const category = item.category.trim() || "Other";
+    if (!groups.has(category)) groups.set(category, []);
+    groups.get(category).push(item);
   }
+  return Array.from(groups, ([name, entries]) => ({ name, entries }));
+}
+
+function renderKnowledgeBase() {
+  const groups = groupByCategory(data);
+  getElement("topics").hidden = groups.length === 0;
+  getElement("answers").hidden = groups.length === 0;
+  getElement("emptyState").hidden = data.length > 0;
+
+  getElement("categoryCards").innerHTML = groups.map((group, index) => `
+    <a class="card" href="#topic-${index}">
+      <div class="icon" aria-hidden="true">${index + 1}</div>
+      <h3>${escapeHTML(group.name)}</h3>
+      <p class="muted">${group.entries.length} approved ${group.entries.length === 1 ? "answer" : "answers"}</p>
+    </a>`).join("");
+
+  getElement("categorySections").innerHTML = groups.map((group, index) => `
+    <section class="section" id="topic-${index}">
+      <div class="sectionhead"><h2>${escapeHTML(group.name)}</h2></div>
+      <div class="answer-list">${group.entries.map(item => `
+        <details class="answer">
+          <summary>${escapeHTML(item.question)}</summary>
+          ${item.type ? `<div class="tag">${escapeHTML(item.type)}</div>` : ""}
+          <p>${escapeHTML(item.answer)}</p>
+        </details>`).join("")}</div>
+    </section>`).join("");
 }
 
 function searchKB() {
-  const q = document.getElementById("searchInput").value.trim().toLowerCase();
-  const box = document.getElementById("results");
-
-  if (!q) {
-    box.style.display = "none";
-    box.innerHTML = "";
-    return;
-  }
+  if (loadState !== "ready") return;
+  const query = getElement("searchInput").value.trim().toLowerCase();
+  const section = getElement("searchResultsSection");
+  const results = getElement("searchResults");
+  if (!query) { section.hidden = true; results.innerHTML = ""; return; }
 
   const matches = data.filter(item =>
-    `${item.question} ${item.answer} ${item.category}`
-      .toLowerCase()
-      .includes(q)
+    `${item.question} ${item.answer} ${item.category}`.toLowerCase().includes(query)
   );
-
-  box.style.display = "block";
-
-box.innerHTML = matches.length
-  ? matches.map(item => `
-      <div class="result">
-        <div class="tag">${escapeHTML(item.type || "FAQ")}</div>
-        <b>${escapeHTML(item.question)}</b>
-        <div class="muted" style="margin-top:4px">
-          ${escapeHTML(item.category)}
-        </div>
-        <p style="margin:10px 0 0">
-          ${escapeHTML(item.answer)}
-        </p>
-      </div>
-    `).join("")
-    : `
-        <div class="result">
-          <b>No results found</b>
-          <span class="muted">Try another search term.</span>
-        </div>
-      `;
+  section.hidden = false;
+  results.innerHTML = matches.length ? matches.map(item => `
+    <article class="result">
+      <div class="tag">${item.type ? `${escapeHTML(item.type)} · ` : ""}${escapeHTML(item.category)}</div>
+      <b>${escapeHTML(item.question)}</b>
+      <p>${escapeHTML(item.answer)}</p>
+    </article>`).join("") : '<div class="result"><b>No approved answers match that search.</b></div>';
 }
 
-loadKnowledgeBase();
+async function loadKnowledgeBase() {
+  const searchInput = getElement("searchInput");
+  const searchButton = getElement("searchButton");
+  searchInput.disabled = true;
+  searchButton.disabled = true;
+  loadState = "loading";
+  setStatus("Loading approved answers…");
 
-document.getElementById("searchInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") searchKB();
+  try {
+    const requestedSlug = new URLSearchParams(window.location.search).get("business");
+    let slug = requestedSlug;
+    if (!slug) {
+      const defaultConfig = await getJson(siteAsset(DEFAULT_CONFIG_PATH));
+      slug = defaultConfig.slug;
+    }
+    if (!validSlug(slug)) throw new Error("Business address is invalid.");
+
+    const config = await getJson(siteAsset(`businesses/${slug}.json`));
+    applyBusinessConfig(config, slug);
+    const csvUrl = safeHttpsUrl(config.approvedCsvUrl);
+    if (!csvUrl) throw new Error("Approved CSV URL is invalid.");
+
+    const response = await fetch(csvUrl);
+    if (!response.ok) throw new Error("Could not load approved answers.");
+    data = mapApprovedCsv(await response.text());
+    renderKnowledgeBase();
+    loadState = "ready";
+    searchInput.disabled = false;
+    searchButton.disabled = false;
+    setStatus(data.length ? "" : "No approved answers are available yet.");
+  } catch (error) {
+    console.error("Knowledge base error:", error);
+    data = [];
+    loadState = "error";
+    searchInput.disabled = true;
+    searchButton.disabled = true;
+    setStatus("This knowledge base is temporarily unavailable. Please try again later.", true);
+  }
+}
+
+getElement("searchForm").addEventListener("submit", event => {
+  event.preventDefault();
+  searchKB();
 });
+loadKnowledgeBase();
 </script>
 </body>
 </html>
