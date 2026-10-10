@@ -18,6 +18,15 @@ Keep the scenario inactive until the business owner has verified the workflow an
 
 For healthcare businesses, keep entries to general operational information. Do not use this workflow to create diagnoses, treatment recommendations, or personalised medical advice. If content is unclear, contradictory, or incomplete, a human must resolve it rather than letting AI fill in the gaps.
 
+## Latest sandbox verification
+
+On 10 October 2026, the inactive sandbox scenario was run against a private Sheet containing synthetic data only. Two new rows marked `AI Ready` passed through the filter:
+
+- A vague answer (`How can I find the sample business website?` / `Use the sample business website.`) produced `REVIEW NEEDED — human clarification required`.
+- A complete synthetic opening-hours answer was rewritten as a draft in `AI draft answer` and its Status remained `Needs review`.
+
+This confirmed that the filter admits complete `AI Ready` rows, incomplete information can be routed for human clarification, and a successful AI rewrite remains unapproved. The sandbox stayed inactive after the checks. The original Northside scenario and its connected Sheet were not changed.
+
 ## Current limits
 
 - The scenario watches newly added rows; it does not process later edits to existing rows.
